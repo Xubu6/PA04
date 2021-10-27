@@ -1,0 +1,9 @@
+---
+#
+# Starts Kafka on VM3
+- name: clear logs
+  command: chdir=/home/cc/kafka_2.12-2.8.0/ rm -fr /tmp/zookeeper/ /tmp/kafka*
+
+- name: start Kafka broker
+  command: chdir=/home/cc/kafka_2.12-2.8.0/ ./bin/kafka-server-start.sh config/server.properties
+...

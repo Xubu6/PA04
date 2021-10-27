@@ -1,0 +1,18 @@
+---
+#
+# Starts Zookeeper and Kafka on VM2
+- name: Copy consumer.py
+  copy:
+    src: ./consumer.py
+    dest: /home/cc/    # destination directory into which this file will get copied.
+
+- name: clear logs
+  command: chdir=/home/cc/kafka_2.12-2.8.0/ rm -fr /tmp/zookeeper/ /tmp/kafka*
+
+- name: start Zookeeper
+  command: chdir=/home/cc/kafka_2.12-2.8.0/ ./bin/zookeeper-server-start.sh config/zookeeper.properties
+
+- name: start Kafka broker
+  command: chdir=/home/cc/kafka_2.12-2.8.0/ ./bin/kafka-server-start.sh config/server.properties
+
+...

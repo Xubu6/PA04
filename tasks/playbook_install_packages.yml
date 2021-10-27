@@ -1,0 +1,41 @@
+---
+# Playbook for installing packages on VMs
+- name: Update apt
+  command: apt-get update
+
+- name: Install a list of packages
+  apt:
+    pkg:
+    - default-jdk
+    - git
+    - python3-pip
+
+- name: Download python packages
+  command: python3 -m pip install --ignore-installed --upgrade kafka-python couchdb
+
+- name: Download kafka
+  get_url:
+    url: https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz
+    dest: /home/cc/
+
+- name: Unzip kafka
+  command: tar -xzf kafka_2.12-2.8.0.tgz
+
+- name: ufw1
+  command: ufw limit 9092
+
+- name: ufw2
+  command: ufw limit 9092/tcp
+
+- name: ufw3
+  command: ufw limit 2181
+
+- name: ufw4
+  command: ufw limit 2181/tcp
+
+- name: ufw5
+  command: ufw limit 5984
+
+- name: ufw6
+  command: ufw limit 5984/tcp
+...

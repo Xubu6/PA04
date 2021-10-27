@@ -1,0 +1,94 @@
+---
+#
+# EECS 4287/5287: Principles of Cloud Computing
+# Author: Aniruddha Gokhale
+# Created: Fall 2017
+# Modified: Fall 2020
+#
+# This playbook is our demo master file
+# The goal is to show how to have a single master file which then
+# includes multiple plays according to some well-designed choreography
+#
+# This file is similar to the one in the AnsibleOnly_Local_and_Cloud folder
+# For now I just kept one play in here but feel free to add more.
+#####################################################
+### Play 1: Get facts from all our VMs
+#
+# Here I show the use of import_tasks from child playbooks
+#####################################################
+- name: "Play 1: Create Cloud VMs"
+  hosts: MyLocalVMs      # specified in the MyInventory file
+  remote_user: vagrant           # note that the user is ubuntu for 
+                             # vagrant-created VM else use the
+                             # appropriate user name
+  strategy: debug
+
+  gather_facts: yes          # We ask Ansible to collect all facts
+  become_user: no            # No need for sudo as we are not installing anything
+  collections:               # import the plugin
+  - openstack.cloud
+
+  tasks:    # the task to be performed (here I am showing the effect of include_)
+  # ignoring because VMs already created
+
+  # - include_tasks: tasks/playbook_create_cloud_vm2.yml
+  # - include_tasks: tasks/playbook_create_cloud_vm3.yml
+
+#####################################################
+
+- name: "Play 2: Install Packages and other necessities on cloud VMs"
+  hosts: MyChameleonVMs       # specified in the MyInventory file
+  remote_user:  cc       # change this user to what it is for the cloud
+  strategy: debug        # start a debugger on error
+  become: yes               # run as sudo
+  collections:               # import the plugin
+  - openstack.cloud
+
+  ### All the tasks related to the cloud VMs ###
+  # note that since we already defined the hosts and remote_user parameters
+  # above, we simply import the tasks (could have included) and these
+  # tasks are in the playbooks defined in my tasks/ directory
+  tasks:
+  - include_tasks: tasks/playbook_install_packages.yml
+
+#####################################################
+
+- name: "Play 3: Start Kafka Broker and Zookeeper on VM2"
+  hosts: MyVM2       # specified in the MyInventory file
+  remote_user:  cc       # change this user to what it is for the cloud
+  strategy: debug        # start a debugger on error
+  become: yes               # run as sudo
+  collections:               # import the plugin
+  - openstack.cloud
+
+
+  tasks:
+  # - include_tasks: tasks/playbook_start_ZK_Kafka_vm2.yml
+
+######################################################
+
+- name: "Play 4: Start Kafka Broker on VM3"
+  hosts: MyVM3      # specified in the MyInventory file
+  remote_user:  cc       # change this user to what it is for the cloud
+  strategy: debug        # start a debugger on error
+  become: yes               # run as sudo
+  collections:               # import the plugin
+  - openstack.cloud
+
+  tasks:
+  # - include_tasks: tasks/playbook_start_Kafka_vm3.yml
+
+#####################################################
+
+- name: "Play 5: Install and Run CouchDB on VM2"
+  hosts: MyVM2       # specified in the MyInventory file
+  remote_user:  cc       # change this user to what it is for the cloud
+  strategy: debug        # start a debugger on error
+  become: yes               # run as sudo
+  collections:               # import the plugin
+  - openstack.cloud
+
+  tasks:
+  - include_tasks: tasks/playbook_cloud_couchdb.yml
+...
+
