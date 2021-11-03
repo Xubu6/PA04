@@ -1,0 +1,25 @@
+---
+# This is a declarative approach to describe a Kubernetes based
+# deployment of an application.  Since this is YAML, the indentation
+# is very important
+apiVersion: apps/v1
+kind: Deployment         # We are testing the Deployment resource
+metadata:
+  name: couch-db-deployment  # A name must be given to the deployment in the metadata section
+spec:                     # This is the specification where we can even put the number of replicas
+  replicas: 1             # Say we want to run 1 replica
+  selector:
+    matchLabels:
+      app: couch-db          # Basically this is like the search string used to locate the pods
+  minReadySeconds: 5  # if anything crashes before 5 secs, the deployment is not
+                          # considered as ready and available. Default value is 0
+  template:               # Specified info needed to run the pod and what runs in the pod
+    metadata:
+      labels:
+        app: couch-db        # some label to give to this pod (see the matching label above)
+    spec:                 # actual specification
+      containers:
+      - name: couch-db       # Used by DNS
+        image: couch-db
+        
+...
