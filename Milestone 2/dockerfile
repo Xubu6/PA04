@@ -17,6 +17,28 @@ RUN apt-get -y update && apt-get install -y net-tools python3 gcc
 RUN apt-get install -y python3-dev python3-pip
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install --upgrade numpy
+RUN apt update
+RUN apt install default-jdk
+RUN apt install git
+RUN wget https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz
+RUN tar -xzf kafka_2.12-2.8.0.tgz
+# RUN ufw limit 9092
+# RUN ufw limit 9092/tcp
+# RUN ufw limit 2181
+# RUN ufw limit 2181/tcp
+# RUN ufw limit 5984
+# RUN ufw limit 5984/tcp
+# RUN ufw limit 10255
+# RUN ufw limit 10250
+# RUN ufw limit 10256
+# RUN ufw limit 10257
+# RUN ufw limit 10259
+# RUN ufw limit 6443
+# don't need to install docker right?
+# need these UFW?
+
+
+
 #
 # Next, copy our matrix inverse code into the container
 COPY *.py /
