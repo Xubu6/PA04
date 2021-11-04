@@ -24,8 +24,10 @@ RUN apt install default-jdk
 
 # Now install Kafka 
 # RUN apt install git  might not need 
-RUN wget https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz
+RUN wget https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz.     
+# http://mirorr.cogentoco.com/pub/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
 RUN tar -xzf kafka_2.12-2.8.0.tgz
+# RUN zcat kafka_2.13-2.6.0.tgz | tar zpof -
 
 
 #
