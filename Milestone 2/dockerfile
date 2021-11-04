@@ -23,26 +23,9 @@ RUN apt update
 RUN apt install default-jdk
 
 # Now install Kafka 
-RUN apt install git
+# RUN apt install git  might not need 
 RUN wget https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz
 RUN tar -xzf kafka_2.12-2.8.0.tgz
-
-# Possible UFWs
-# RUN ufw limit 9092
-# RUN ufw limit 9092/tcp
-# RUN ufw limit 2181
-# RUN ufw limit 2181/tcp
-# RUN ufw limit 5984
-# RUN ufw limit 5984/tcp
-# RUN ufw limit 10255
-# RUN ufw limit 10250
-# RUN ufw limit 10256
-# RUN ufw limit 10257
-# RUN ufw limit 10259
-# RUN ufw limit 6443
-# don't need to install docker right?
-# need these UFW?
-
 
 
 #
