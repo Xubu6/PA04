@@ -20,19 +20,18 @@ RUN pip3 install --upgrade numpy
 RUN apt update
 
 # Now install the needed java package
-RUN apt install default-jdk
+RUN apt-get install default-jdk
 
 # Now install Kafka 
-# RUN apt install git  might not need 
-RUN wget https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz.     
-# http://mirorr.cogentoco.com/pub/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
-RUN tar -xzf kafka_2.12-2.8.0.tgz
-# RUN zcat kafka_2.13-2.6.0.tgz | tar zpof -
+# RUN wget https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz
+# RUN tar -xzf kafka_2.12-2.8.0.tgz
+RUN wget http://mirror.cogentco.com/pub/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
+RUN zcat kafka_2.13-2.6.0.tgz | tar xpof-
 
 
 #
 # Next, copy our matrix inverse code into the container
-COPY *.py /
+# COPY *.py /
 #
 # Run a command shell (for Swarm and Kubernetes, we comment this out)
 #CMD /bin/bash
