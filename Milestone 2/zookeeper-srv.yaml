@@ -9,7 +9,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: zookeeper 
+  name: zookeeper-svc
 spec:
   type: NodePort   # by using NodePort, the service is published to outside world.
   selector:
@@ -18,6 +18,6 @@ spec:
     - name: zookeeper-port    # not needed, but I have added this
       protocol: TCP     # this is default (so not needed either)
       port: 5556   # the port used by the server inside the pod/container
-      targetPort: 5556   # not sure if we need this because if not specified, it is same as port
-      nodePort: 30000  # this is what will be externally published
+      targetPort: 2181   # not sure if we need this because if not specified, it is same as port
+      nodePort: 2181  # this is what will be externally published
 ...
