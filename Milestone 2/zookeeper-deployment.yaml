@@ -1,0 +1,32 @@
+---
+# This is a declarative approach to describe a Kubernetes based
+# deployment of an application.  Since this is YAML, the indentation
+# is very important
+apiVersion: apps/v1
+kind: Deployment         # We are testing the Deployment resource
+metadata:
+  name: zookeeper-deployment  # A name must be given to the deployment in the metadata section
+spec:                     # This is the specification where we can even put the number of replicas
+  replicas: 1             # Want two brokers
+  selector:
+    matchLabels:
+      app: zookeeper          # Basically this is like the search string used to locate the pods
+  minReadySeconds: 5  # if anything crashes before 5 secs, the deployment is not
+                          # considered as ready and available. Default value is 0
+  template:               # Specified info needed to run the pod and what runs in the pod
+    metadata:
+      labels:
+        app: zookeeper        # some label to give to this pod (see the matching label above)
+    spec:                 # actual specification
+      hostname: zookeeper-host  #this might need to be changed, not sure what this is 
+      nodeSelector: kubernetes.io/hostname:team16-ansible-vm2
+      containers:
+      - name: zookeeper       # Used by DNS
+        image: 129.114.25.102:5000/dockerfile
+        ports: 
+        - containerPort:9092
+        imagePullPolicy: IfNotPresent
+        command: ["./bin/zookeeper-server-start.sh config/zookeeper.properties"]
+        args: ["kafka_2.13-2.6.0/config/zookeeper.properties"]
+ 
+...
