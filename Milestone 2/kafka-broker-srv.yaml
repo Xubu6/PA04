@@ -9,15 +9,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-broker-1-srv
+  name: kafka-broker-srv
 spec:
   type: NodePort   # by using NodePort, the service is published to outside world.
   selector:
-    app: kafka-broker-1     # used to match the pod(s) that run the actual kafka broker server
+    app: kafka-broker     # used to match the pod(s) that run the actual kafka broker server
   ports:
-    - name: kafka-broker-1-port    # not needed, but I have added this
+    - name: kafka-broker-port    # not needed, but I have added this
       protocol: TCP     # this is default (so not needed either)
       port: 9092   # the port used by the server inside the pod/container
       targetPort: 9092   # not sure if we need this because if not specified, it is same as port
-      nodePort: 30001  # this is what will be externally published
+      nodePort: 30000  # this is what will be externally published
 ...
