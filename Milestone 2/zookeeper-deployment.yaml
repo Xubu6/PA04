@@ -24,7 +24,7 @@ spec:                     # This is the specification where we can even put the 
       - name: zookeeper       # Used by DNS
         image: 129.114.25.102:5000/dockerfile
         ports: 
-        - containerPort:9092
+        - containerPort:2181
         imagePullPolicy: IfNotPresent
         command: ["./bin/zookeeper-server-start.sh config/zookeeper.properties"]
         args: ["kafka_2.13-2.6.0/config/zookeeper.properties"]
