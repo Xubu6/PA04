@@ -22,13 +22,13 @@ RUN apt update
 # Now install the needed java package
 RUN apt-get install default-jdk
 
-# CoouchDB installation
-RUN apt-get install -y curl apt-transport-https gnupg
-RUN curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
-RUN source /etc/os-release
-RUN echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" \ | tee /etc/apt/sources.list.d/couchdb.list >/dev/null
-RUN apt-get update
-RUN apt-get install couchdb
+# CoouchDB installation (not necessary because we will be using docker couchdb image)
+# RUN apt-get install -y curl apt-transport-https gnupg
+# RUN curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
+# RUN source /etc/os-release
+# RUN echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" \ | tee /etc/apt/sources.list.d/couchdb.list >/dev/null
+# RUN apt-get update
+# RUN apt-get install couchdb
 
 # Now install Kafka 
 # RUN wget https://archive.apache.org/dist/kafka/2.8.0/kafka_2.12-2.8.0.tgz
