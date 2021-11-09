@@ -1,0 +1,6 @@
+---
+- name: Worker Addition VM3
+  command: kubeadm join 10.212.96.72:6443 --token cwwoff.10wizgeoxhn4dft8 --discovery-token-ca-cert-hash sha256:06e51ea6e1a6ea6b3bf09ba4a66cec47204ceb6b55e29708fbc61cb2a7d87ed2 --node-name kubeworker1
+
+
+...

@@ -1,0 +1,8 @@
+---
+
+- name: Create k8s cluster VM2
+  command: sudo kubeadm init --node-name kubemaster --pod-network-cidr=10.244.0.0/16
+
+
+
+...

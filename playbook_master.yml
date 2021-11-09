@@ -89,6 +89,39 @@
   - openstack.cloud
 
   tasks:
-  - include_tasks: tasks/playbook_cloud_couchdb.yml
+  # - include_tasks: tasks/playbook_cloud_couchdb.yml
+
+- name: "Play 6: Create k8s Cluster"
+  hosts: MyVM2       # specified in the MyInventory file
+  remote_user:  cc       # change this user to what it is for the cloud
+  strategy: debug        # start a debugger on error
+  become: yes               # run as sudo
+  collections:               # import the plugin
+  - openstack.cloud
+
+  tasks:
+  # - include_tasks: tasks/playbook_create_k8s_cluster.yml
+
+- name: "Play 7: Worker Addition"
+  hosts: MyVM3      # specified in the MyInventory file
+  remote_user:  cc       # change this user to what it is for the cloud
+  strategy: debug        # start a debugger on error
+  become: yes               # run as sudo
+  collections:               # import the plugin
+  - openstack.cloud
+
+  tasks:
+  # - include_tasks: tasks/playbook_worker_addition.yml
+
+- name: "Play 8: Master Tainting"
+  hosts: MyVM2       # specified in the MyInventory file
+  remote_user:  cc       # change this user to what it is for the cloud
+  strategy: debug        # start a debugger on error
+  become: yes               # run as sudo
+  collections:               # import the plugin
+  - openstack.cloud
+
+  tasks:
+  # - include_tasks: tasks/playbook_taint_master.yml
 ...
 
