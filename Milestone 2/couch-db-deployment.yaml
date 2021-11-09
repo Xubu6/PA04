@@ -20,6 +20,9 @@ spec:                     # This is the specification where we can even put the 
     spec:                 # actual specification
       containers:
       - name: couch-db       # Used by DNS
-        image: couch-db
+        image: 129.114.25.102:5000/couch-db
+        ports: 
+         - containerPort: 5984
+        imagePullPolicy: IfNotPresent
         
 ...
