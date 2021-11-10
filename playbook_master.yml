@@ -1,9 +1,9 @@
 ---
 #
 # EECS 4287/5287: Principles of Cloud Computing
-# Author: Aniruddha Gokhale
-# Created: Fall 2017
-# Modified: Fall 2020
+# Author: Group 16
+# Created: Fall 2021
+# Modified: Fall 2021
 #
 # This playbook is our demo master file
 # The goal is to show how to have a single master file which then
@@ -123,5 +123,23 @@
 
   tasks:
   # - include_tasks: tasks/playbook_taint_master.yml
+  
+  # playbook to build dockerfile
+  
+  # create private registry, tag and push to private registry 
+  
+  # in the etc/docker directory on each node, add line in daemon.json
+  
+  # restart regsitry 
+  
+  # push image to new registry 
+  
+  # start master
+  
+  # starts kafka worker
+  
+  # start couchdb worker
+  
+  # start consumer worker
 ...
 
