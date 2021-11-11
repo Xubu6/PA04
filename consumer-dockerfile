@@ -17,9 +17,6 @@ RUN echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https:
 RUN apt-get update
 RUN apt-get install -y couchdb
 
-# Now install the needed java package
-RUN apt-get install default-jdk
-
 COPY ./consumer.py .
 
 
