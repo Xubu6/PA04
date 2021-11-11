@@ -22,7 +22,7 @@ spec:                     # This is the specification where we can even put the 
       nodeSelector: kubernetes.io/hostname:team16-ansible-vm2
       containers:
       - name: kafka-broker       # Used by DNS
-        image: 129.114.25.102:5000/dockerfile
+        image: 129.114.25.102:5000/kafka-dockerfile
         ports: 
         - containerPort:9092
         imagePullPolicy: IfNotPresent
