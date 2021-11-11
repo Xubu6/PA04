@@ -123,23 +123,18 @@
 
   tasks:
   # - include_tasks: tasks/playbook_taint_master.yml
+
+- name: "Play 9: Start Workers"
+  hosts: MyVM2       # specified in the MyInventory file
+  remote_user:  cc       # change this user to what it is for the cloud
+  strategy: debug        # start a debugger on error
+  become: no               # run as sudo
+  collections:               # import the plugin
+  - openstack.cloud
+
+  tasks:
+  - include_tasks: tasks/playbook_start_workers.yml
   
-  # playbook to build dockerfile
-  
-  # create private registry, tag and push to private registry 
-  
-  # in the etc/docker directory on each node, add line in daemon.json
-  
-  # restart regsitry 
-  
-  # push image to new registry 
-  
-  # start master
-  
-  # starts kafka worker
-  
-  # start couchdb worker
-  
-  # start consumer worker
+
 ...
 

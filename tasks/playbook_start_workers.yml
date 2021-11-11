@@ -1,0 +1,38 @@
+---
+# Playbook to:
+# start master, kafka workers, couchdb worker, consumer worker
+
+### Services
+
+- name: kafka service (1/2)
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f kafka-broker-srv.yaml
+
+- name: zookeeper service
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f zookeeper-srv.yaml
+
+- name: kafka service (2/2)
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f kafka-broker-2-srv.yaml
+
+- name: couchdb service
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f couch-db-srv.yaml
+
+- name: Check services
+  command: kubectl get services
+
+### Deployments
+
+- name: zookeeper deployment
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f zookeeper-deployment.yaml --validate=false
+
+- name: kafka deployment (1/2)
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f kafka-broker-deployment.yaml --validate=false
+
+- name: kafka deployment (2/2)
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f kafka-broker-2-deployment.yaml --validate=false
+
+- name: couchdb deployment
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f couch-db-deployment.yaml --validate=false
+
+- name: Check pods
+  command: kubectl get pods
+...

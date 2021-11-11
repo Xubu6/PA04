@@ -1,0 +1,10 @@
+---
+# Ensure that master node can schedule jobs and behave as a worker node
+
+- name: Taint master
+  command: kubectl taint nodes kubemaster node-role.kubernetes.io/master:NoSchedule-
+
+- name: Check if master is added as worker
+  command: kubectl get nodes -o json | jq '.items[].spec.taints'
+
+...
