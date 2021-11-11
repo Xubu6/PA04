@@ -17,8 +17,8 @@ spec:                     # This is the specification where we can even put the 
         image: 129.114.25.102:5000/consumer-image   # this is the image in registry accessible
                                              # from all our workers
         imagePullPolicy: Always  # This forces the node to pull the image
-        command: ["consumer.py"]
-        args: []  # arguments to run
+        command: ["python3"]
+        args: ["consumer.py"]  # arguments to run
       restartPolicy: Never  # we ask Kubernetes not to restart
      
 ...
