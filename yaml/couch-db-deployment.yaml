@@ -24,8 +24,10 @@ spec:                     # This is the specification where we can even put the 
         ports: 
          - containerPort: 5984
         env:
-         - COUCHDB_USER: admin
-         - COUCHDB_PASSWORD: "16"
+         - name: COUCHDB_USER
+           value: "admin"
+         - name: COUCHDB_PASSWORD
+           value: "16"
         imagePullPolicy: IfNotPresent
         
 ...
