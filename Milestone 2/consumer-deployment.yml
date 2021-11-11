@@ -20,7 +20,7 @@ spec:                     # This is the specification where we can even put the 
     spec:                 # actual specification
       containers:
       - name: couch-db       # Used by DNS
-        image: 129.114.25.102:5000/consumer-image # change to bitnami/couchdb?
+        image: 129.114.25.102:5000/consumer-image
         # ports: 
         #  - containerPort: 5984
         imagePullPolicy: IfNotPresent
