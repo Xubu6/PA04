@@ -19,7 +19,8 @@ spec:                     # This is the specification where we can even put the 
         app: kafka-broker-2        # some label to give to this pod (see the matching label above)
     spec:                 # actual specification
       hostname: kafka-broker-2-host  #this might need to be changed, not sure what this is 
-      nodeSelector: kubernetes.io/hostname: team16-ansible-vm2
+      nodeSelector: 
+       kubernetes.io/hostname: team16-ansible-vm2
       containers:
       - name: kafka-broker-2       # Used by DNS
         image: 129.114.25.102:5000/kafka-dockerfile
