@@ -35,4 +35,7 @@
 
 - name: Check pods
   command: kubectl get pods
+
+- name: Consumer job
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f consumer-job.yaml --validate=false
 ...

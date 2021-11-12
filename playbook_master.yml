@@ -100,7 +100,7 @@
   - openstack.cloud
 
   tasks:
-  # - include_tasks: tasks/playbook_create_k8s_cluster.yml
+  - include_tasks: tasks/playbook_create_k8s_cluster.yml
 
 - name: "Play 7: Worker Addition"
   hosts: MyVM3      # specified in the MyInventory file
