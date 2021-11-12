@@ -5,16 +5,16 @@
 ### Services
 
 - name: kafka service (1/2)
-  command: chdir=/home/cc/PA03/yaml kubectl apply -f kafka-broker-srv.yaml
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f kafka-broker-srv.yaml --validate=false
 
 - name: zookeeper service
-  command: chdir=/home/cc/PA03/yaml kubectl apply -f zookeeper-srv.yaml
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f zookeeper-srv.yaml --validate=false
 
 - name: kafka service (2/2)
-  command: chdir=/home/cc/PA03/yaml kubectl apply -f kafka-broker-2-srv.yaml
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f kafka-broker-2-srv.yaml --validate=false
 
 - name: couchdb service
-  command: chdir=/home/cc/PA03/yaml kubectl apply -f couch-db-srv.yaml
+  command: chdir=/home/cc/PA03/yaml kubectl apply -f couch-db-srv.yaml --validate=false
 
 - name: Check services
   command: kubectl get services

@@ -53,42 +53,42 @@
 
 #####################################################
 
-- name: "Play 3: Start Kafka Broker and Zookeeper on VM2"
-  hosts: MyVM2       # specified in the MyInventory file
-  remote_user:  cc       # change this user to what it is for the cloud
-  strategy: debug        # start a debugger on error
-  become: yes               # run as sudo
-  collections:               # import the plugin
-  - openstack.cloud
+# - name: "Play 3: Start Kafka Broker and Zookeeper on VM2"
+#   hosts: MyVM2       # specified in the MyInventory file
+#   remote_user:  cc       # change this user to what it is for the cloud
+#   strategy: debug        # start a debugger on error
+#   become: yes               # run as sudo
+#   collections:               # import the plugin
+#   - openstack.cloud
 
 
-  tasks:
+#   tasks:
   # - include_tasks: tasks/playbook_start_ZK_Kafka_vm2.yml
 
 ######################################################
 
-- name: "Play 4: Start Kafka Broker on VM3"
-  hosts: MyVM3      # specified in the MyInventory file
-  remote_user:  cc       # change this user to what it is for the cloud
-  strategy: debug        # start a debugger on error
-  become: yes               # run as sudo
-  collections:               # import the plugin
-  - openstack.cloud
+# - name: "Play 4: Start Kafka Broker on VM3"
+#   hosts: MyVM3      # specified in the MyInventory file
+#   remote_user:  cc       # change this user to what it is for the cloud
+#   strategy: debug        # start a debugger on error
+#   become: yes               # run as sudo
+#   collections:               # import the plugin
+#   - openstack.cloud
 
-  tasks:
+#   tasks:
   # - include_tasks: tasks/playbook_start_Kafka_vm3.yml
 
 #####################################################
 
-- name: "Play 5: Install and Run CouchDB on VM2"
-  hosts: MyVM2       # specified in the MyInventory file
-  remote_user:  cc       # change this user to what it is for the cloud
-  strategy: debug        # start a debugger on error
-  become: yes               # run as sudo
-  collections:               # import the plugin
-  - openstack.cloud
+# - name: "Play 5: Install and Run CouchDB on VM2"
+#   hosts: MyVM2       # specified in the MyInventory file
+#   remote_user:  cc       # change this user to what it is for the cloud
+#   strategy: debug        # start a debugger on error
+#   become: yes               # run as sudo
+#   collections:               # import the plugin
+#   - openstack.cloud
 
-  tasks:
+#   tasks:
   # - include_tasks: tasks/playbook_cloud_couchdb.yml
 
 - name: "Play 6: Create k8s Cluster"
