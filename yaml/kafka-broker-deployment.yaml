@@ -20,7 +20,7 @@ spec:                     # This is the specification where we can even put the 
     spec:                 # actual specification
       hostname: kafka-broker-host  #this might need to be changed, not sure what this is 
       nodeSelector: 
-       kubernetes.io/hostname: team16-ansible-vm2
+       kubernetes.io/hostname: kubemaster
       containers:
       - name: kafka-broker       # Used by DNS
         image: 129.114.25.102:5000/kafka-dockerfile
