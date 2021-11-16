@@ -27,7 +27,7 @@ spec:                     # This is the specification where we can even put the 
         ports: 
         - containerPort: 2181
         imagePullPolicy: IfNotPresent
-        command: ["./kafka_2.13-2.6.0/bin/zookeeper-server-start.sh"]
-        args: ["./kafka_2.13-2.6.0/config/zookeeper.properties"]
+        command: ["/kafka_2.13-3.0.0/bin/zookeeper-server-start.sh"]
+        args: ["/kafka_2.13-3.0.0/config/zookeeper.properties"]
  
 ...
