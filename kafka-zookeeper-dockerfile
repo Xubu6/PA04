@@ -20,7 +20,7 @@ RUN pip3 install --upgrade numpy
 RUN apt update
 
 # Now install the needed java package
-RUN apt-get -y update && apt-get install -y net-tools wget dnsutils iputiles-ping iputils-tracepath iputils-arping iputils-clockdiff default-jdk python3
+RUN apt-get -y update && apt-get install -y net-tools wget dnsutils iputils-ping iputils-tracepath iputils-arping iputils-clockdiff default-jdk python3
 
 # CoouchDB installation (not necessary because we will be using docker couchdb image)
 # RUN apt-get install -y curl apt-transport-https gnupg
