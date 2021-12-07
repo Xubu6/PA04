@@ -31,7 +31,7 @@ consumer = KafkaConsumer (
 consumer.subscribe (topics=["utilizations"])
 
 user = "admin"
-password = "team16"
+password = "16"
 couchserver = couchdb.Server("http://%s:%s@129.114.24.223:5984/" % (user, password))
 dbname = "topicdata"
 if dbname in couchserver:
@@ -45,8 +45,6 @@ data = {}
 for i, msg in enumerate(consumer):
     print (msg.value)
     data[i] = msg.value
-    if (i > 10):
-       break
 #    db.save(value)
 # we are done. As such, we are not going to get here as the above loop
 # is a forever loop.
