@@ -1,0 +1,57 @@
+---
+# CS4287-5287
+# Author: Aniruddha Gokhale
+# Created: Spring 2021
+#
+# For assignment #4
+# this is the deployment pod for Spark workers
+apiVersion: apps/v1
+kind: Deployment         # We are testing the Deployment resource
+metadata:
+  name: spark-worker-deploy  # This will run the Spark worker
+spec:                     # This is the specification where we can even put the number of replicas
+  replicas: 5             # we run 5 workers
+  selector:
+    matchLabels:
+      app: sparkWorkerApp          # Basically this is like the search string used to locate the pods
+  minReadySeconds: 5  # if anything crashes before 5 secs, the deployment is not
+                          # considered as ready and available. Default value is 0
+  template:               # Specified info needed to run the pod and what runs in the pod
+    metadata:
+      labels:
+        app: sparkWorkerApp        # some label to give to this pod (see the matching label above)
+    spec:                 # actual specification
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: nodetype
+                operator: In
+                values:
+                - worker
+      hostname: spark-worker-host  # we need it to set the SPARK_LOCAL_IP
+      containers:
+        - name: spark-worker       # used to name container
+          image: 129.114.25.102:5000/my-spark:latest   # this is the image in private registry
+          ports:            # Spark worker port
+            - containerPort: 7078  # worker will use this port instead of random port 7077
+            - containerPort: 8080  # GUI
+          env:  # environment variables to pass
+
+            - name: SPARK_LOCAL_IP
+              value: "spark-worker"  # floating IP 
+
+            - name: SPARK_NO_DAEMONIZE # so that the master runs in foreground
+              value: "1"
+
+            # the SPARK_HOME env set in docker image is not accessible for the command line
+            # below. So had to set it here.
+            - name: SPARK_HOME  
+              value: "/spark-3.2.0-bin-hadoop3.2"
+
+          imagePullPolicy: Always  # This forces the node to pull the image
+          command: ["$(SPARK_HOME)/sbin/start-worker.sh"]
+          args: ["spark://spark-master-svc:7077"]
+...
