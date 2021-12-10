@@ -86,8 +86,6 @@ class EnergyMapReduce:
             StructField("household_id", IntegerType(), True),
             StructField("house_id", IntegerType(), True)])
 
-        # columns = ["id", "timestamp", "value", "property", "plug_id", "household_id", "house_id"]
-
         mapped = SparkSession\
             .builder\
             .appName("AvgWorkMapReduce")\
@@ -96,13 +94,6 @@ class EnergyMapReduce:
         self.debug(
             f"trying to create DataFrame")
         df = mapped.createDataFrame(chunks, energySchema)
-        # reduced = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
-        # reduce = mapped.aggregateByKey(
-        #     zeroValue=(0, 0),
-
-        #     sum=lambda a, b: (a[0] + b, a[1] + 1),
-        #     count=lambda a, b: (a[0] + b[0], a[1] + b[1]))\
-        #     .mapValues(lambda x: x[0]/x[1]).collect()  # basic avg computation
         reduce = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
         mapped.stop();
         reduce = [r.asDict() for r in reduce]
@@ -192,5 +183,5 @@ if __name__ == "__main__":
     results = json.dumps(avg_load_results)
     master.debug(f'{results}')
     # Save results to couchdb
-    # master.save_to_db('average-work', avg_work_results)
-    master.save_to_db('average-load', avg_load_results)
+    master.save_to_db('average-work', avg_load_results)
+    # master.save_to_db('average-load', avg_load_results)
