@@ -1,5 +1,4 @@
 import couchdb
-import argparse
 import logging
 import time
 import json
@@ -8,6 +7,7 @@ import numpy
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.types import StructType,StructField, StringType, FloatType, IntegerType
 import pyspark.sql.functions as f
+import requests
 
 
 
@@ -118,6 +118,8 @@ class EnergyMapReduce:
                 f"Successfully connected to existing CouchDB database {dbname}")
         self.debug(f'Preparing to save results to database')
 
+        res = json.dumps(results)
+        db.save(res);
         # chunked_list = numpy.array_split(results,2)
 
         # for result in results:
@@ -132,13 +134,16 @@ class EnergyMapReduce:
         #         self.debug("Saved row")
         #     except Exception as e:
         #         self.error(e)
+        # url = "http://admin:16@129.114.24.223:5984/"
         # for chunk in chunked_list:
         #     #convert to json
         #     docs = json.dumps({'docs': chunk.tolist()})
-        #     #send it!
         #     print('Sending chunk.')
+        #     # res = requests.post(url, headers=headers, data=docs)
+        #     # print('Response body:', res.status_code)
         #     db.save(docs)
-        db.save(results)
+
+        # db.save(results)
         self.debug("Saving completed")
 
     def setup_logging(self, verbose):
@@ -172,14 +177,14 @@ if __name__ == "__main__":
     #     time.sleep(3)
 
     # Use mapreduce to get the average values for both properties 'work' and 'load'
-    avg_work_results = master.compute_average(
-        chunks=master.get_chunks(),
-        property='work'
-    )
+    # avg_work_results = master.compute_average(
+    #     chunks=master.get_chunks(),
+    #     property='work'
+    # )
     avg_load_results = master.compute_average(
         chunks=master.get_chunks(),
         property='load'
     )
     # Save results to couchdb
-    master.save_to_db('average-work', avg_work_results)
+    # master.save_to_db('average-work', avg_work_results)
     master.save_to_db('average-load', avg_load_results)
