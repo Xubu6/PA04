@@ -73,6 +73,8 @@ class EnergyMapReduce:
             StructField("household_id", IntegerType(), True),
             StructField("house_id", IntegerType(), True)])
 
+        columns = ["id", "timestamp", "value", "property", "plug_id", "household_id", "house_id"]
+
         mapped = SparkSession\
             .builder\
             .appName("AvgWorkMapReduce")\
@@ -93,7 +95,7 @@ class EnergyMapReduce:
             # )
         self.debug(
             f"trying to create DataFrame")
-        df = mapped.createDataFrame(data=chunks, schema=energySchema)
+        df = mapped.createDataFrame(chunks, columns)
         # reduced = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
         # reduce = mapped.aggregateByKey(
         #     zeroValue=(0, 0),
