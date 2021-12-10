@@ -66,7 +66,8 @@ class EnergyMapReduce:
                 tmp.append(int(record[5]))
                 tmp.append(int(record[6]))
                 chunks.append(tmp)
-                if count > 100:
+                count+=1
+                if count > 1000:
                     break
             self.debug(
                 f"{len(chunks)} records created")
