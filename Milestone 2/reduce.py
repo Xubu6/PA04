@@ -67,7 +67,7 @@ class EnergyMapReduce:
                 tmp.append(int(record[6]))
                 chunks.append(tmp)
                 count+=1
-                if count > 10000:
+                if count >= 10000:
                     break
             self.debug(
                 f"{len(chunks)} records created")
@@ -114,8 +114,8 @@ class EnergyMapReduce:
         sumLoad=0.0
         n=0.0
         for res in results:
-            sumWork+=float(res[3])
-            sumLoad+=float(res[4])
+            sumWork+=float(res['work'])
+            sumLoad+=float(res['load'])
             n+=1
         avgWork = sumWork / n;
         avgLoad = sumLoad / n;
@@ -166,12 +166,16 @@ if __name__ == "__main__":
     #     chunks=master.get_chunks(),
     #     property='work'
     # )
-    avg_load_results = master.compute_average(
+    # avg_load_results = master.compute_average(
+    #     chunks=master.get_chunks(),
+    #     property='load'
+    # )
+    reduced_results = master.compute_average(
         chunks=master.get_chunks(),
         property='load'
     )
-    results = json.dumps(avg_load_results)
+    results = json.dumps(reduced_results)
     master.debug(f'{results}')
     # Save results to couchdb
-    master.save_to_db('average-work', avg_load_results)
+    master.save_to_db('reduced-results', reduced_results)
     # master.save_to_db('average-load', avg_load_results)
