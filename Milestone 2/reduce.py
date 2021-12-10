@@ -67,7 +67,7 @@ class EnergyMapReduce:
                 tmp.append(int(record[6]))
                 chunks.append(tmp)
                 count+=1
-                if count > 1000:
+                if count > 10000:
                     break
             self.debug(
                 f"{len(chunks)} records created")
@@ -110,33 +110,23 @@ class EnergyMapReduce:
                 f"Successfully connected to existing CouchDB database {dbname}")
         self.debug(f'Preparing to save results to database')
 
+        sumWork=0.0
+        sumLoad=0.0
+        n=0.0
+        for res in results:
+            sumWork+=float(res[3])
+            sumLoad+=float(res[4])
+            n+=1
+        avgWork = sumWork / n;
+        avgLoad = sumLoad / n;
+        self.debug(f"average work: {avgWork}, average load: {avgLoad}")
+
         res = json.dumps(results)
         data = {}
         for i, res in enumerate(results):
             data[i] = res
-        db.save(data);
-        # chunked_list = numpy.array_split(results,2)
 
-        # for result in results:
-        #     try:
-        #         payload = {
-        #             'plug_id': result[0][0],
-        #             'household_id': result[0][1],
-        #             'house_id': result[0][2],
-        #             'value': result[1]
-        #         }
-        #         db.save(payload)
-        #         self.debug("Saved row")
-        #     except Exception as e:
-        #         self.error(e)
-        # url = "http://admin:16@129.114.24.223:5984/"
-        # for chunk in chunked_list:
-        #     #convert to json
-        #     docs = json.dumps({'docs': chunk.tolist()})
-        #     print('Sending chunk.')
-        #     # res = requests.post(url, headers=headers, data=docs)
-        #     # print('Response body:', res.status_code)
-        #     db.save(docs)
+        db.save(data);
 
         # db.save(results)
         self.debug("Saving completed")
