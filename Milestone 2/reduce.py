@@ -34,7 +34,7 @@ class EnergyMapReduce:
         if dbname in self.couchserver:
             self.db = self.couchserver[dbname]
             self.debug(
-                f"Successfully connected to existing CouchDB database {self.couchdb_database}")
+                f"Successfully connected to existing CouchDB database energy-data")
         else:
             self.db = self.couchserver.create(dbname)
             self.debug(
@@ -42,8 +42,8 @@ class EnergyMapReduce:
 
     def get_chunks(self):
         chunks = []
-        for _id in self.db:
-            chunk = self.db.get(_id).get('results')
+        for doc_id in self.db:
+            chunk = self.db.get(doc_id).get('results')
 
             for energy_record in chunk:
                 chunks.append(energy_record)
