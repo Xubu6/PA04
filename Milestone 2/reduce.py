@@ -24,20 +24,20 @@ import pandas as pd
 
 
 class EnergyMapReduce:
-    def equivalent_type(f):
+    def equivalent_type(self, f):
         if f == 'datetime64[ns]': return TimestampType()
         elif f == 'int64': return LongType()
         elif f == 'int32': return IntegerType()
         elif f == 'float64': return FloatType()
         else: return StringType()
 
-    def define_structure(string, format_type):
+    def define_structure(self, string, format_type):
         try: typo = self.equivalent_type(format_type)
         except: typo = StringType()
         return StructField(string, typo)
 
     # Given pandas dataframe, it will return a spark's dataframe.
-    def pandas_to_spark(pandas_df):
+    def pandas_to_spark(self, pandas_df):
         columns = list(pandas_df.columns)
         types = list(pandas_df.dtypes)
         struct_list = []
