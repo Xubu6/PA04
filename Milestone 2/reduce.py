@@ -119,7 +119,10 @@ class EnergyMapReduce:
         self.debug(f'Preparing to save results to database')
 
         res = json.dumps(results)
-        db.save(res);
+        data = {}
+        for i, res in enumerate(results):
+            data[i] = res
+        db.save(data);
         # chunked_list = numpy.array_split(results,2)
 
         # for result in results:
