@@ -130,7 +130,7 @@ class EnergyMapReduce:
         self.logger.error(msg, extra=self.prefix)
 
 if __name__ == "__main__":
-    master = EnergyMapReduce()
+    master = EnergyMapReduce(verbose=True)
 
     # Use mapreduce to get the average values for both properties 'work' and 'load'
     avg_work_results = master.compute_average(
