@@ -185,6 +185,9 @@ if __name__ == "__main__":
         chunks=master.get_chunks(),
         property='load'
     )
+
+    for result in avg_load_results:
+        master.debug(f'M: {result[0]} R: {result[1]} I: {result[2]} Time: {result[3]}')
     # Save results to couchdb
     # master.save_to_db('average-work', avg_work_results)
     master.save_to_db('average-load', avg_load_results)
