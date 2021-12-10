@@ -7,6 +7,7 @@ import os
 import numpy
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.types import StructType,StructField, StringType, FloatType, IntegerType
+import pyspark.sql.functions as f
 
 
 
@@ -54,6 +55,7 @@ class EnergyMapReduce:
                 f"doc_id is {doc_id}")
             chunk = self.db.get(doc_id).get('results')
 
+            count = 0;
             for record in chunk:
                 tmp = []
                 tmp.append(int(record[0]))
@@ -64,9 +66,10 @@ class EnergyMapReduce:
                 tmp.append(int(record[5]))
                 tmp.append(int(record[6]))
                 chunks.append(tmp)
-        self.debug(
-                f"{len(chunks)} chunks created")
-        
+                if count > 100:
+                    self.debug(
+                f"{len(chunks)} records created")
+                    break
         return chunks
     def compute_average(self, chunks=[], property='work'):
         filterBy = {
