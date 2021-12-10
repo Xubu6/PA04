@@ -68,7 +68,7 @@ class EnergyMapReduce:
                 chunks.append(tmp)
                 if count > 100:
                     self.debug(
-                f"{len(chunks)} records created")
+                        f"{len(chunks)} records created")
                     break
         return chunks
     def compute_average(self, chunks=[], property='work'):
@@ -118,7 +118,7 @@ class EnergyMapReduce:
                 f"Successfully connected to existing CouchDB database {dbname}")
         self.debug(f'Preparing to save results to database')
 
-        chunked_list = numpy.array_split(results,2)
+        # chunked_list = numpy.array_split(results,2)
 
         # for result in results:
         #     try:
@@ -132,12 +132,13 @@ class EnergyMapReduce:
         #         self.debug("Saved row")
         #     except Exception as e:
         #         self.error(e)
-        for chunk in chunked_list:
-            #convert to json
-            docs = json.dumps({'docs': chunk.tolist()})
-            #send it!
-            print('Sending chunk.')
-            db.save(docs)
+        # for chunk in chunked_list:
+        #     #convert to json
+        #     docs = json.dumps({'docs': chunk.tolist()})
+        #     #send it!
+        #     print('Sending chunk.')
+        #     db.save(docs)
+        db.save(results)
         self.debug("Saving completed")
 
     def setup_logging(self, verbose):
