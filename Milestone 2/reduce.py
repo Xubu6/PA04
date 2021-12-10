@@ -71,7 +71,7 @@ class EnergyMapReduce:
         reduce = mapped.aggregateByKey(
             zeroValue=(0, 0),
 
-            sum=lambda a, b: (a[0] + b,    a[1] + 1),
+            sum=lambda a, b: (a[0] + b, a[1] + 1),
             count=lambda a, b: (a[0] + b[0], a[1] + b[1]))\
             .mapValues(lambda x: x[0]/x[1]).collect()  # basic avg computation
         return reduce
