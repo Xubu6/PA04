@@ -49,10 +49,10 @@ class EnergyMapReduce:
 
     def get_chunks(self):
         chunks = []
-        for doc_id in self.db:
+        for _id in self.db:
             self.debug(
-                f"doc_id is {doc_id}")
-            chunk = self.db.get(doc_id).get('results')
+                f"document id is {_id}")
+            chunk = self.db.get(_id).get('results')
 
             count = 0;
             for record in chunk:
@@ -66,11 +66,12 @@ class EnergyMapReduce:
                 tmp.append(int(record[6]))
                 chunks.append(tmp)
                 count+=1
-                if count >= 10000:
-                    break
+                # if count >= 10000:
+                #     break
             self.debug(
                 f"{len(chunks)} records created")
         return chunks
+
     def compute_average(self, chunks=[], property='work'):
         
         energySchema = StructType([
@@ -106,6 +107,7 @@ class EnergyMapReduce:
                 f"Successfully connected to existing CouchDB database {dbname}")
         self.debug(f'Preparing to save results to database')
 
+        # Average Load and Work computation
         sumWork=0.0
         sumLoad=0.0
         n=0.0
@@ -143,12 +145,6 @@ class EnergyMapReduce:
 
     def debug(self, msg):
         self.logger.debug(msg, extra=self.prefix)
-
-    def info(self, msg):
-        self.logger.info(msg, extra=self.prefix)
-
-    def error(self, msg):
-        self.logger.error(msg, extra=self.prefix)
 
 if __name__ == "__main__":
     master = EnergyMapReduce(verbose=True)
