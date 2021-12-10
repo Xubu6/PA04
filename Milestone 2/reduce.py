@@ -5,6 +5,7 @@ import time
 import json
 import os
 from pyspark.sql import SparkSession, Row
+from pyspark.sql.types import StructType,StructField, StringType, FloatType, IntegerType
 
 
 
@@ -63,34 +64,44 @@ class EnergyMapReduce:
             'work': '0',
             'load': '1'
         }
+        energySchema = StructType([
+            StructField("id", IntegerType(), True),
+            StructField("timestamp", IntegerType(), True),
+            StructField("value", FloatType(), True),
+            StructField("property", IntegerType(), True),
+            StructField("plug_id", IntegerType(), True),
+            StructField("household_id", IntegerType(), True),
+            StructField("house_id", IntegerType(), True)])
+
         mapped = SparkSession\
             .builder\
             .appName("AvgWorkMapReduce")\
-            .getOrCreate()\
-            .createDataFrame(
-                Row(
-                    id=int(x[0]),
-                    timestamp=x[1],
-                    value=float(x[2]),
-                    property=int(x[3]),
-                    plug_id=int(x[4]),
-                    household_id=int(x[5]),
-                    house_id=int(x[6])
-                ) for x in chunks if x[3] == filterBy[property]).rdd.map(
-                lambda row: (
-                    (row.plug_id, row.household_id, row.house_id), row.value
-                )
-            )
+            .getOrCreate()
+            # .createDataFrame(
+            #     Row(
+            #         id=int(x[0]),
+            #         timestamp=x[1],
+            #         value=float(x[2]),
+            #         property=int(x[3]),
+            #         plug_id=int(x[4]),
+            #         household_id=int(x[5]),
+            #         house_id=int(x[6])
+            #     ) for x in chunks if x[3] == filterBy[property]).rdd.map(
+            #     lambda row: (
+            #         (row.plug_id, row.household_id, row.house_id), row.value
+            #     )
+            # )
         self.debug(
             f"trying to create DataFrame")
-        # df = mapped.createDataFrame(chunks)
+        df = mapped.createDataFrame(data=chunks, schema=energySchema)
         # reduced = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
-        reduce = mapped.aggregateByKey(
-            zeroValue=(0, 0),
+        # reduce = mapped.aggregateByKey(
+        #     zeroValue=(0, 0),
 
-            sum=lambda a, b: (a[0] + b, a[1] + 1),
-            count=lambda a, b: (a[0] + b[0], a[1] + b[1]))\
-            .mapValues(lambda x: x[0]/x[1]).collect()  # basic avg computation
+        #     sum=lambda a, b: (a[0] + b, a[1] + 1),
+        #     count=lambda a, b: (a[0] + b[0], a[1] + b[1]))\
+        #     .mapValues(lambda x: x[0]/x[1]).collect()  # basic avg computation
+        reduce = df.groupby(['plug_id', 'household_id', 'house_id', 'property']).avg().show()
         mapped.stop();
         return reduce
 
