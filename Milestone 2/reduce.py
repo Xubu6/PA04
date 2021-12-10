@@ -4,9 +4,8 @@ import logging
 import time
 import json
 import os
-from pyspark.sql import SparkSession, Row, SQLContext
-from pyspark.sql.types import *
-import pandas as pd
+from pyspark.sql import SparkSession, Row
+
 
 
 # spark = SparkSession\
@@ -24,28 +23,6 @@ import pandas as pd
 
 
 class EnergyMapReduce:
-    def equivalent_type(self, f):
-        if f == 'datetime64[ns]': return TimestampType()
-        elif f == 'int64': return LongType()
-        elif f == 'int32': return IntegerType()
-        elif f == 'float64': return FloatType()
-        else: return StringType()
-
-    def define_structure(self, string, format_type):
-        try: typo = self.equivalent_type(format_type)
-        except: typo = StringType()
-        return StructField(string, typo)
-
-    # Given pandas dataframe, it will return a spark's dataframe.
-    def pandas_to_spark(self, pandas_df):
-        columns = list(pandas_df.columns)
-        types = list(pandas_df.dtypes)
-        struct_list = []
-        for column, typo in zip(columns, types): 
-            struct_list.append(self.define_structure(column, typo))
-        p_schema = StructType(struct_list)
-        return sqlContext.createDataFrame(pandas_df, p_schema)
-    
     def __init__(self, verbose=False):
         self.setup_logging(verbose=verbose)
         self.couch_connect()
@@ -89,35 +66,33 @@ class EnergyMapReduce:
         mapped = SparkSession\
             .builder\
             .appName("AvgWorkMapReduce")\
-            .getOrCreate()
-            # .createDataFrame(
-            #     Row(
-            #         id=int(x[0]),
-            #         timestamp=x[1],
-            #         value=float(x[2]),
-            #         property=int(x[3]),
-            #         plug_id=int(x[4]),
-            #         household_id=int(x[5]),
-            #         house_id=int(x[6])
-            #     ) for x in chunks if x[3] == filterBy[property]).rdd.map(
-            #     lambda row: (
-            #         (row.plug_id, row.household_id, row.house_id), row.value
-            #     )
-            # )
+            .getOrCreate()\
+            .createDataFrame(
+                Row(
+                    id=int(x[0]),
+                    timestamp=x[1],
+                    value=float(x[2]),
+                    property=int(x[3]),
+                    plug_id=int(x[4]),
+                    household_id=int(x[5]),
+                    house_id=int(x[6])
+                ) for x in chunks if x[3] == filterBy[property]).rdd.map(
+                lambda row: (
+                    (row.plug_id, row.household_id, row.house_id), row.value
+                )
+            )
         self.debug(
             f"trying to create DataFrame")
-        pd_df = pd.DataFrame(chunks)
-        spark_df = self.pandas_to_spark(pd_df)
-        df = mapped.createDataFrame(spark_df)
-        reduced = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
-        # reduce = mapped.aggregateByKey(
-        #     zeroValue=(0, 0),
+        # df = mapped.createDataFrame(chunks)
+        # reduced = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
+        reduce = mapped.aggregateByKey(
+            zeroValue=(0, 0),
 
-        #     sum=lambda a, b: (a[0] + b, a[1] + 1),
-        #     count=lambda a, b: (a[0] + b[0], a[1] + b[1]))\
-        #     .mapValues(lambda x: x[0]/x[1]).collect()  # basic avg computation
+            sum=lambda a, b: (a[0] + b, a[1] + 1),
+            count=lambda a, b: (a[0] + b[0], a[1] + b[1]))\
+            .mapValues(lambda x: x[0]/x[1]).collect()  # basic avg computation
         mapped.stop();
-        return reduced
+        return reduce
 
     def save_to_db(self, dbname, results):
         try:
