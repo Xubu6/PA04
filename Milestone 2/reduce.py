@@ -21,7 +21,8 @@ from pyspark.sql import SparkSession, Row
 
 
 class EnergyMapReduce:
-    def __init__(self):
+    def __init__(self, verbose=False):
+        self.setup_logging(verbose=verbose)
         self.couch_connect()
     
     # create couchdb connection
@@ -32,8 +33,12 @@ class EnergyMapReduce:
         self.couchserver = couchdb.Server("http://%s:%s@129.114.24.223:5984/" % (user, password))
         if dbname in self.couchserver:
             self.db = self.couchserver[dbname]
+            self.debug(
+                f"Successfully connected to existing CouchDB database {self.couchdb_database}")
         else:
             self.db = self.couchserver.create(dbname)
+            self.debug(
+                f"Successfully created new CouchDB database energy-data")
 
     def get_chunks(self):
         chunks = []
@@ -42,6 +47,8 @@ class EnergyMapReduce:
 
             for energy_record in chunk:
                 chunks.append(energy_record)
+        self.debug(
+                f"{len(chunks)} chunks created")
         return chunks
 
     def compute_average(self, chunks=[], property='work'):
@@ -78,10 +85,13 @@ class EnergyMapReduce:
     def save_to_db(self, dbname, results):
         try:
             db = self.couchserver.create(dbname)
+            self.debug(
+                f"Successfully created new CouchDB database {dbname}")
         except:
             db = self.couchserver[dbname]
-            self.debug("Connected to db")
-        self.debug('Attempting to save to db')
+            self.debug(
+                f"Successfully connected to existing CouchDB database {dbname}")
+        self.debug(f'Preparing to save {len(results)} items to database')
 
         for result in results:
             try:
@@ -95,6 +105,29 @@ class EnergyMapReduce:
             except Exception as e:
                 self.error(e)
         self.debug("Saving completed")
+
+    def setup_logging(self, verbose):
+        self.logger = logging.getLogger('EnergyMapReduce')
+        formatter = logging.Formatter('%(prefix)s - %(message)s')
+        handler = logging.StreamHandler()
+        handler.setFormatter(formatter)
+        self.prefix = {'prefix': 'EnergyMapReduce'}
+        self.logger.addHandler(handler)
+        self.logger = logging.LoggerAdapter(self.logger, self.prefix)
+        if verbose:
+            self.logger.setLevel(logging.DEBUG)
+            self.logger.debug('Debug mode enabled', extra=self.prefix)
+        else:
+            self.logger.setLevel(logging.INFO)
+
+    def debug(self, msg):
+        self.logger.debug(msg, extra=self.prefix)
+
+    def info(self, msg):
+        self.logger.info(msg, extra=self.prefix)
+
+    def error(self, msg):
+        self.logger.error(msg, extra=self.prefix)
 
 if __name__ == "__main__":
     master = EnergyMapReduce()
