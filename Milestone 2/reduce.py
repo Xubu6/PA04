@@ -7,6 +7,7 @@ import numpy
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.types import StructType, StructField, FloatType, IntegerType
 import pyspark.sql.functions as f
+from time import perf_counter
 
 
 
@@ -28,6 +29,8 @@ class EnergyMapReduce:
     def __init__(self, verbose=False):
         self.setup_logging(verbose=verbose)
         self.couch_connect()
+        self.averages = [];
+        self.workers = [[10,2],[50,5],[100,10]]
 
     def database_exists(self, database):
         return database in self.couchserver
@@ -73,7 +76,6 @@ class EnergyMapReduce:
         return chunks
 
     def compute_average(self, chunks=[], property='work'):
-        
         energySchema = StructType([
             StructField("id", IntegerType(), True),
             StructField("timestamp", IntegerType(), True),
@@ -83,16 +85,26 @@ class EnergyMapReduce:
             StructField("household_id", IntegerType(), True),
             StructField("house_id", IntegerType(), True)])
 
-        mapped = SparkSession\
-            .builder\
-            .appName("AvgWorkMapReduce")\
-            .getOrCreate()
+        for worker in self.workers:
+            i = 0
+            while i < 10:
+                mapped = SparkSession\
+                    .builder\
+                    .appName("AvgWorkMapReduce")\
+                    .config('spark.default.parallelism',worker[0])\
+                    .config('spark.sql.shuffle.partitions',worker[1])\
+                    .getOrCreate()
 
-        self.debug(
-            f"trying to create DataFrame")
-        df = mapped.createDataFrame(chunks, energySchema)
-        reduce = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
-        mapped.stop();
+                self.debug(
+                    f"trying to create DataFrame")
+                df = mapped.createDataFrame(chunks, energySchema)
+                start_time = perf_counter()
+                reduce = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
+                end_time = perf_counter() 
+                time_elapsed = end_time - start_time
+                self.averages.append([worker[0],worker[1],time_elapsed,i])
+                i += 1
+                mapped.stop();
         reduce = [r.asDict() for r in reduce]
         return reduce
 
@@ -167,7 +179,9 @@ if __name__ == "__main__":
         property='load'
     )
     results = json.dumps(reduced_results)
-    master.debug(f'{results}')
+    # master.debug(f'{results}')
+    for row in master.averages:
+        master.debug(f'M: {row[0]} R: {row[1]} Time: {row[2]} #: {row[3]}')
     # Save results to couchdb
     master.save_to_db('reduced-results', reduced_results)
     # master.save_to_db('average-load', avg_load_results)
