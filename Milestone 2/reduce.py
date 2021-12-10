@@ -46,6 +46,8 @@ class EnergyMapReduce:
     def get_chunks(self):
         chunks = []
         for doc_id in self.db:
+            self.debug(
+                f"doc_id is {doc_id}")
             chunk = self.db.get(doc_id).get('results')
 
             for record in chunk:
