@@ -67,9 +67,9 @@ class EnergyMapReduce:
                 tmp.append(int(record[6]))
                 chunks.append(tmp)
                 if count > 100:
-                    self.debug(
-                        f"{len(chunks)} records created")
                     break
+            self.debug(
+                f"{len(chunks)} records created")
         return chunks
     def compute_average(self, chunks=[], property='work'):
         filterBy = {
@@ -185,9 +185,8 @@ if __name__ == "__main__":
         chunks=master.get_chunks(),
         property='load'
     )
-
-    for result in avg_load_results:
-        master.debug(f'M: {result[0]} R: {result[1]} I: {result[2]} Time: {result[3]}')
+    results = json.dumps(avg_load_results)
+    master.debug(f'{results}')
     # Save results to couchdb
     # master.save_to_db('average-work', avg_work_results)
     master.save_to_db('average-load', avg_load_results)
