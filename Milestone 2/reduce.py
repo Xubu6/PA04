@@ -21,8 +21,7 @@ from pyspark.sql import SparkSession, Row
 
 
 class EnergyMapReduce:
-    def __init__(self, verbose=False):
-        self.setup_logging(verbose=verbose)
+    def __init__(self):
         self.couch_connect()
     
     # create couchdb connection
@@ -39,8 +38,8 @@ class EnergyMapReduce:
     def get_chunks(self):
         chunks = []
         for _id in self.db:
-            chunk = self.db.get(_id).get('chunk')
-            # This chunk contains many sub dicts, each of which represent an energy record from CSV
+            chunk = self.db.get(_id).get('results')
+
             for energy_record in chunk:
                 chunks.append(energy_record)
         return chunks
@@ -98,9 +97,8 @@ class EnergyMapReduce:
         self.debug("Saving completed")
 
 if __name__ == "__main__":
-    master = EnergyMapReduce(verbose=True)
+    master = EnergyMapReduce()
 
-    master.info("CouchDB Server is now ready, beginning Spark Analysis")
     # Use mapreduce to get the average values for both properties 'work' and 'load'
     avg_work_results = master.compute_average(
         chunks=master.get_chunks(),
