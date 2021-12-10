@@ -4,7 +4,10 @@ import logging
 import time
 import json
 import os
-from pyspark.sql import SparkSession, Row
+from pyspark.sql import SparkSession, Row, SQLContext
+from pyspark.sql.types import *
+import pandas as pd
+
 
 # spark = SparkSession\
 #     .builder\
@@ -21,6 +24,28 @@ from pyspark.sql import SparkSession, Row
 
 
 class EnergyMapReduce:
+    def equivalent_type(f):
+        if f == 'datetime64[ns]': return TimestampType()
+        elif f == 'int64': return LongType()
+        elif f == 'int32': return IntegerType()
+        elif f == 'float64': return FloatType()
+        else: return StringType()
+
+    def define_structure(string, format_type):
+        try: typo = self.equivalent_type(format_type)
+        except: typo = StringType()
+        return StructField(string, typo)
+
+    # Given pandas dataframe, it will return a spark's dataframe.
+    def pandas_to_spark(pandas_df):
+        columns = list(pandas_df.columns)
+        types = list(pandas_df.dtypes)
+        struct_list = []
+        for column, typo in zip(columns, types): 
+            struct_list.append(self.define_structure(column, typo))
+        p_schema = StructType(struct_list)
+        return sqlContext.createDataFrame(pandas_df, p_schema)
+    
     def __init__(self, verbose=False):
         self.setup_logging(verbose=verbose)
         self.couch_connect()
@@ -54,8 +79,8 @@ class EnergyMapReduce:
                 chunks.append(record)
         self.debug(
                 f"{len(chunks)} chunks created")
+        
         return chunks
-
     def compute_average(self, chunks=[], property='work'):
         filterBy = {
             'work': '0',
@@ -81,7 +106,9 @@ class EnergyMapReduce:
             # )
         self.debug(
             f"trying to create DataFrame")
-        df = mapped.createDataFrame(chunks)
+        pd_df = pd.DataFrame(chunks)
+        spark_df = self.pandas_to_spark(pd_df)
+        df = mapped.createDataFrame(spark_df)
         reduced = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
         # reduce = mapped.aggregateByKey(
         #     zeroValue=(0, 0),
