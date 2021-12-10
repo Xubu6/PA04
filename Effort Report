@@ -1,0 +1,12 @@
+Effort Report - Programming Assignment 4
+
+For this assigment, lots of PA03 could be reused. Therefore, Milestone 1 was not a large challenge. 
+However, Spark was new to all our group member, and there were many complications in just the installation. 
+We installed Spark, but there was difficulty running the master, and so we eventually had to uninstall and reinstall, 
+and in our second attempt, we got Spark working. After we got Spark working, we tried to create k8s clusters, but
+we ran into many issues with not many ways to debug these, so we decided to use Spark on its own. We then worked to
+create code for the Map and Reduce functions to generate the data. 
+Overall, we found it very difficult to debug with spark. The error messages were vague, especially in setting up the 
+master, and the instructions did not correctly specify what IP addresses to use always (between private and public). 
+However, we learned a lot about Spark and the general work arounds for software installations and setups. We also 
+learned how to successfully implement map and reduce, something none of us had done before. 
