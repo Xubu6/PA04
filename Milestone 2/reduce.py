@@ -137,9 +137,9 @@ class EnergyMapReduce:
 if __name__ == "__main__":
     master = EnergyMapReduce(verbose=True)
 
-    while not master.database_exists("complete"):
-        master.debug("waiting on 'complete' database creation")
-        time.sleep(3)
+    # while not master.database_exists("complete"):
+    #     master.debug("waiting on 'complete' database creation")
+    #     time.sleep(3)
 
     # Use mapreduce to get the average values for both properties 'work' and 'load'
     avg_work_results = master.compute_average(
