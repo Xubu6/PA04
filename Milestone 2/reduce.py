@@ -24,6 +24,9 @@ class EnergyMapReduce:
     def __init__(self, verbose=False):
         self.setup_logging(verbose=verbose)
         self.couch_connect()
+
+    def database_exists(self, database):
+        return database in self.couchserver
     
     # create couchdb connection
     def couch_connect(self):
@@ -45,8 +48,8 @@ class EnergyMapReduce:
         for doc_id in self.db:
             chunk = self.db.get(doc_id).get('results')
 
-            for energy_record in chunk:
-                chunks.append(energy_record)
+            for record in chunk:
+                chunks.append(record)
         self.debug(
                 f"{len(chunks)} chunks created")
         return chunks
@@ -131,6 +134,10 @@ class EnergyMapReduce:
 
 if __name__ == "__main__":
     master = EnergyMapReduce(verbose=True)
+
+    while not master.database_exists("complete"):
+        master.debug("waiting on 'complete' database creation")
+        time.sleep(3)
 
     # Use mapreduce to get the average values for both properties 'work' and 'load'
     avg_work_results = master.compute_average(
