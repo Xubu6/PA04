@@ -5,9 +5,8 @@ import json
 import os
 import numpy
 from pyspark.sql import SparkSession, Row
-from pyspark.sql.types import StructType,StructField, StringType, FloatType, IntegerType
+from pyspark.sql.types import StructType, StructField, FloatType, IntegerType
 import pyspark.sql.functions as f
-import requests
 
 
 
@@ -73,10 +72,7 @@ class EnergyMapReduce:
                 f"{len(chunks)} records created")
         return chunks
     def compute_average(self, chunks=[], property='work'):
-        filterBy = {
-            'work': '0',
-            'load': '1'
-        }
+        
         energySchema = StructType([
             StructField("id", IntegerType(), True),
             StructField("timestamp", IntegerType(), True),
