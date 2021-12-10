@@ -4,6 +4,7 @@ import logging
 import time
 import json
 import os
+import numpy
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.types import StructType,StructField, StringType, FloatType, IntegerType
 
@@ -87,20 +88,7 @@ class EnergyMapReduce:
             .builder\
             .appName("AvgWorkMapReduce")\
             .getOrCreate()
-            # .createDataFrame(
-            #     Row(
-            #         id=int(x[0]),
-            #         timestamp=x[1],
-            #         value=float(x[2]),
-            #         property=int(x[3]),
-            #         plug_id=int(x[4]),
-            #         household_id=int(x[5]),
-            #         house_id=int(x[6])
-            #     ) for x in chunks if x[3] == filterBy[property]).rdd.map(
-            #     lambda row: (
-            #         (row.plug_id, row.household_id, row.house_id), row.value
-            #     )
-            # )
+
         self.debug(
             f"trying to create DataFrame")
         df = mapped.createDataFrame(chunks, energySchema)
@@ -111,8 +99,9 @@ class EnergyMapReduce:
         #     sum=lambda a, b: (a[0] + b, a[1] + 1),
         #     count=lambda a, b: (a[0] + b[0], a[1] + b[1]))\
         #     .mapValues(lambda x: x[0]/x[1]).collect()  # basic avg computation
-        reduce = df.groupby(['plug_id', 'household_id', 'house_id', 'property']).avg().show()
+        reduce = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
         mapped.stop();
+        reduce = [r.asDict() for r in reduce]
         return reduce
 
     def save_to_db(self, dbname, results):
@@ -124,19 +113,28 @@ class EnergyMapReduce:
             db = self.couchserver[dbname]
             self.debug(
                 f"Successfully connected to existing CouchDB database {dbname}")
-        self.debug(f'Preparing to save {len(results)} items to database')
+        self.debug(f'Preparing to save results to database')
 
-        for result in results:
-            try:
-                payload = {
-                    'plug_id': result[0][0],
-                    'household_id': result[0][1],
-                    'house_id': result[0][2],
-                    'value': result[1]
-                }
-                db.save(payload)
-            except Exception as e:
-                self.error(e)
+        chunked_list = numpy.array_split(results,2)
+
+        # for result in results:
+        #     try:
+        #         payload = {
+        #             'plug_id': result[0][0],
+        #             'household_id': result[0][1],
+        #             'house_id': result[0][2],
+        #             'value': result[1]
+        #         }
+        #         db.save(payload)
+        #         self.debug("Saved row")
+        #     except Exception as e:
+        #         self.error(e)
+        for chunk in chunked_list:
+            #convert to json
+            docs = json.dumps({'docs': chunk.tolist()})
+            #send it!
+            print('Sending chunk.')
+            db.save(docs)
         self.debug("Saving completed")
 
     def setup_logging(self, verbose):
