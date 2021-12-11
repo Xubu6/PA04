@@ -1,7 +1,9 @@
 ## MapReduce Analysis
 
 Iterations: 30 — 10 iterations for each combination of mappers and reducers
+
 Numbers of mappers and reducers: 10 and 2, 50 and 5, 100 and 10
+
 
 Below is a table of each iteration:
 
