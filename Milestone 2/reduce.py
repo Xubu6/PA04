@@ -102,7 +102,7 @@ class EnergyMapReduce:
                 reduce = df.groupby(['house_id', 'household_id', 'plug_id']).agg(f.avg(f.when(df.property == 0, df.value)).alias('work'), f.avg(f.when(df.property == 1, df.value)).alias('load')).collect()
                 end_time = perf_counter() 
                 time_elapsed = end_time - start_time
-                self.averages.append([worker[0],worker[1],time_elapsed,i])
+                self.averages.append([worker[0],worker[1],time_elapsed])
                 i += 1
                 mapped.stop();
         reduce = [r.asDict() for r in reduce]
@@ -161,19 +161,6 @@ class EnergyMapReduce:
 if __name__ == "__main__":
     master = EnergyMapReduce(verbose=True)
 
-    # while not master.database_exists("complete"):
-    #     master.debug("waiting on 'complete' database creation")
-    #     time.sleep(3)
-
-    # Use mapreduce to get the average values for both properties 'work' and 'load'
-    # avg_work_results = master.compute_average(
-    #     chunks=master.get_chunks(),
-    #     property='work'
-    # )
-    # avg_load_results = master.compute_average(
-    #     chunks=master.get_chunks(),
-    #     property='load'
-    # )
     reduced_results = master.compute_average(
         chunks=master.get_chunks(),
         property='load'
@@ -181,7 +168,7 @@ if __name__ == "__main__":
     results = json.dumps(reduced_results)
     # master.debug(f'{results}')
     for row in master.averages:
-        master.debug(f'M: {row[0]} R: {row[1]} Time: {row[2]} #: {row[3]}')
+        master.debug(f'Num_Mappers: {row[0]} Num_Reducers: {row[1]} Time_Elapsed: {row[2]}')
     # Save results to couchdb
     master.save_to_db('reduced-results', reduced_results)
     # master.save_to_db('average-load', avg_load_results)
